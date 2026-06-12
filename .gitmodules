@@ -1,0 +1,9 @@
+[submodule "vendor/libwebp"]
+	path = vendor/libwebp
+	url = https://github.com/webmproject/libwebp
+[submodule "vendor/libjxl"]
+	path = vendor/libjxl
+	url = https://github.com/libjxl/libjxl
+[submodule "vendor/libavif"]
+	path = vendor/libavif
+	url = https://github.com/AOMediaCodec/libavif
