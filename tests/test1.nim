@@ -4,6 +4,7 @@ import ../src/pixerver2/types
 import ../src/pixerver2/multipart
 import ../src/pixerver2/context
 import ../src/pixerver2/router
+import ../src/pixerver2/rawimage
 
 # ---------------------------------------------------------------------------
 suite "multipart parser":
@@ -229,6 +230,46 @@ suite "context value store":
     values["other"] = AnotherRef(val: "hello")
     check TestUser(values["user"]).name   == "bob"
     check AnotherRef(values["other"]).val == "hello"
+
+# ---------------------------------------------------------------------------
+suite "raw image storage":
+
+  test "pixel formats expose expected byte sizes":
+    check bytesPerChannel(rgba8) == 1
+    check bytesPerPixel(rgba8) == 4
+    check bytesPerChannel(rgba16) == 2
+    check bytesPerPixel(rgba16) == 8
+    check bytesPerChannel(rgbaF16) == 2
+    check bytesPerPixel(rgbaF16) == 8
+
+  test "initRawImage allocates tightly packed rgba8 by default":
+    let img = initRawImage(3, 2)
+    check img.width == 3
+    check img.height == 2
+    check img.format == rgba8
+    check img.stride == 12
+    check img.data.len == 24
+    check img.alphaMode == alphaStraight
+    check img.orientation == orientIdentity
+    check img.isTightlyPacked()
+    check img.isValid()
+
+  test "initRawImage accepts explicit padded stride":
+    let img = initRawImage(3, 2, rgba16, stride = 32)
+    check img.stride == 32
+    check img.data.len == 64
+    check not img.isTightlyPacked()
+    check img.rowOffset(1) == 32
+    check img.isValid()
+
+  test "initRawImage rejects undersized stride":
+    expect ValueError:
+      discard initRawImage(3, 2, rgbaF16, stride = 12)
+
+  test "isValid rejects inconsistent buffers":
+    var img = initRawImage(2, 2)
+    img.data.setLen(4)
+    check not img.isValid()
 
 # ---------------------------------------------------------------------------
 suite "router":

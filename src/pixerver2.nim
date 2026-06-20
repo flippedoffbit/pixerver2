@@ -5,7 +5,8 @@ import pixerver2/server
 import pixerver2/router
 import pixerver2/context
 import pixerver2/types
-export server, router, context, types
+import pixerver2/rawimage
+export server, router, context, types, rawimage
 
 # ---------------------------------------------------------------------------
 when isMainModule:
