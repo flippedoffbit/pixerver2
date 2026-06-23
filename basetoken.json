@@ -1,0 +1,77 @@
+{
+    "callbackUrl": "http://localhost:8080/callback",
+    "callbackCredentialsKey":"key mapped to value of bearer token that should be sent to callbackUrl",
+    "backends":{
+        "s3":{"configKey":"key", "credentialsKey":"key"},
+        "s3:public":{"configKey":"key", "credentialsKey":"key"},
+        "gcs":{"configKey":"key", "credentialsKey":"key"},
+        "azure":{"configKey":"key", "credentialsKey":"key"},
+        "ftp":{"configKey":"key", "credentialsKey":"key"},
+        "http":{"configKey":"key", "credentialsKey":"key"},
+        "directory":{"configKey":"key", "credentialsKey":"key"}
+    },
+
+    "transformers":{
+        "crop":"some-random-key-against-crop-settings-kvdb",
+        "rotate":"some-random-key-against-rotate-settings-kvdb",
+        "watermark":"some-random-key-against-watermark-settings-kvdb"
+    },
+    "resolutions":{
+        "original":{"width":0,"height":0},
+        "thumbnail":{"width":100,"height":75},
+        "large":{"width":800,"height":600},
+        "medium":{"width":400,"height":300},
+        "small":{"width":200,"height":150},
+        "icon":{"width":50,"height":50}
+    },
+
+    "keepOrginal":{
+        "keep":true, 
+        "destinationBackend":"s3"
+    },
+
+    "conversionJobs":[
+        {
+         "type":"jpeg",
+         "resolutions":[ "large","medium","small" ],
+         "transformers":[ "crop","rotate" ],
+         "destinationBackends":["s3","gcs" ],
+          "settings":{
+              "quality":"80",
+              "effort":"6",
+              "speed":"4"
+          }
+        },
+        {
+         "type":"webp",
+         "resolutions":[ "large","medium","small","thumbnail" ],
+         "transformers":[],
+         "destinationBackends":["directory","s3:public","http" ],
+          "settings":{
+              "quality":"75",
+              "effort":"5"
+          }
+        },
+        {
+         "type":"avif",
+         "resolutions":[ "large","medium","small" ],
+         "transformers":[],
+         "destinationBackends":["s3:public" ],
+          "settings":{
+              "quality":"55",
+              "effort":"6"
+          }
+        },
+        {
+         "type":"png",
+         "resolutions":[ "thumbnail","icon" ],
+         "transformers":[],
+         "destinationBackends":["directory" ],
+          "settings":{
+              "compressionLevel":"9",
+              "strip":"true"
+          }
+        }
+    ]
+
+}
